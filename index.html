@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Quality Prediction | AQI Monitoring System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c7873;
+            --secondary-color: #6fb3b8;
+            --accent-color: #ff9a3d;
+            --light-color: #f7f9fb;
+            --dark-color: #2a363b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: var(--dark-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .header-section {
+            background: linear-gradient(rgba(44, 120, 115, 0.9), rgba(44, 120, 115, 0.8)), url('https://images.unsplash.com/photo-1589652717521-10c0d092dea9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 0 80px;
+            clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+            margin-bottom: 60px;
+        }
+        
+        h1, h2, h3, h4, h5 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+        
+        .main-title {
+            font-size: 3.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tagline {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .features-section {
+            padding: 60px 0;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            border-top: 4px solid var(--primary-color);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 2.8rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .btn-primary-custom {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(44, 120, 115, 0.3);
+        }
+        
+        .btn-primary-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(44, 120, 115, 0.4);
+            background: linear-gradient(to right, #266a66, #5fa1a6);
+        }
+        
+        .btn-success-custom {
+            background: linear-gradient(to right, #4CAF50, #8BC34A);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .btn-success-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(76, 175, 80, 0.4);
+            background: linear-gradient(to right, #43A047, #7CB342);
+        }
+        
+        .aqi-visualization {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            margin-top: 20px;
+        }
+        
+        .aqi-level {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        
+        .aqi-color {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        
+        .footer-section {
+            background: var(--dark-color);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+            clip-path: polygon(0 20%, 100% 0, 100% 100%, 0 100%);
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .stats-box {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            margin: 10px;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5rem;
+            }
+            
+            .header-section {
+                padding: 70px 0 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <div class="header-section text-center">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10 col-xl-8">
+                    <h1 class="main-title">Air Quality Prediction System</h1>
+                    <p class="tagline">Advanced Machine Learning based AQI Prediction and Algorithm Comparison for cleaner, healthier environments</p>
+                    
+                    <div class="mt-5">
+                        <a href="/login" class="btn btn-primary-custom me-3 mb-3">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login to Dashboard
+                        </a>
+                        <a href="/register" class="btn btn-success-custom mb-3">
+                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        </a>
+                    </div>
+                    
+                    <div class="mt-5 floating-element">
+                        <i class="fas fa-wind fa-3x" style="opacity: 0.7;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Features Section -->
+    <div class="features-section">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-md-8 text-center">
+                    <h2 class="mb-3" style="color: var(--primary-color);">Advanced AQI Monitoring Features</h2>
+                    <p>Our system uses state-of-the-art machine learning algorithms to predict air quality index with high accuracy.</p>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h4>ML Algorithms</h4>
+                        <p>Compare multiple machine learning models like Random Forest, SVM, and Neural Networks for AQI prediction.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4>Real-time Analytics</h4>
+                        <p>Monitor air quality in real-time with interactive charts and predictive analytics for future AQI levels.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <h4>Location-based Insights</h4>
+                        <p>Get specific air quality data for your location with detailed pollutant breakdown and health recommendations.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stats & AQI Visualization -->
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="stats-box">
+                    <h4 class="mb-4" style="color: var(--primary-color);">System Performance</h4>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="stat-number">95%</div>
+                            <p>Prediction Accuracy</p>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-number">24/7</div>
+                            <p>Real-time Monitoring</p>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-6">
+                            <div class="stat-number">5+</div>
+                            <p>ML Algorithms</p>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-number">&lt;1s</div>
+                            <p>Response Time</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="aqi-visualization">
+                    <h4 class="mb-4" style="color: var(--primary-color);">AQI Levels Guide</h4>
+                    
+                    <div class="aqi-level" style="background-color: rgba(76, 175, 80, 0.1);">
+                        <div class="aqi-color" style="background-color: #4CAF50;"></div>
+                        <div>
+                            <h6 class="mb-0">Good (0-50)</h6>
+                            <small class="text-muted">Air quality is satisfactory</small>
+                        </div>
+                    </div>
+                    
+                    <div class="aqi-level" style="background-color: rgba(255, 235, 59, 0.1);">
+                        <div class="aqi-color" style="background-color: #FFEB3B;"></div>
+                        <div>
+                            <h6 class="mb-0">Moderate (51-100)</h6>
+                            <small class="text-muted">Acceptable air quality</small>
+                        </div>
+                    </div>
+                    
+                    <div class="aqi-level" style="background-color: rgba(255, 152, 0, 0.1);">
+                        <div class="aqi-color" style="background-color: #FF9800;"></div>
+                        <div>
+                            <h6 class="mb-0">Unhealthy for Sensitive Groups (101-150)</h6>
+                            <small class="text-muted">Members of sensitive groups may experience health effects</small>
+                        </div>
+                    </div>
+                    
+                    <div class="aqi-level" style="background-color: rgba(244, 67, 54, 0.1);">
+                        <div class="aqi-color" style="background-color: #F44336;"></div>
+                        <div>
+                            <h6 class="mb-0">Unhealthy (151-200)</h6>
+                            <small class="text-muted">Everyone may begin to experience health effects</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Call to Action -->
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-8 text-center">
+                <div class="p-5 rounded" style="background: linear-gradient(135deg, rgba(44, 120, 115, 0.1) 0%, rgba(111, 179, 184, 0.1) 100%);">
+                    <h3 class="mb-4" style="color: var(--primary-color);">Ready to Monitor Air Quality?</h3>
+                    <p class="mb-4">Join thousands of users who are already monitoring air quality with our advanced prediction system.</p>
+                    <a href="/register" class="btn btn-primary-custom pulse-animation">
+                        <i class="fas fa-rocket me-2"></i>Get Started Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer-section">
+        <div class="container text-center">
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <h4 class="mb-4">Air Quality Prediction System</h4>
+                    <p class="mb-4">Using machine learning to predict and analyze air quality index for healthier communities.</p>
+                    <div class="mb-4">
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-github fa-lg"></i></a>
+                    </div>
+                    <p class="mb-0">&copy; 2023 Air Quality Prediction System. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effect to feature cards
+            const featureCards = document.querySelectorAll('.feature-card');
+            featureCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+            
+            // Animate stats numbers on scroll
+            const animateNumbers = () => {
+                const statNumbers = document.querySelectorAll('.stat-number');
+                statNumbers.forEach(stat => {
+                    const originalText = stat.textContent;
+                    stat.textContent = '0';
+                    
+                    const updateNumber = () => {
+                        const target = parseInt(originalText);
+                        const current = parseInt(stat.textContent);
+                        const increment = Math.ceil(target / 50);
+                        
+                        if (current < target) {
+                            stat.textContent = current + increment;
+                            setTimeout(updateNumber, 30);
+                        } else {
+                            stat.textContent = originalText;
+                        }
+                    };
+                    
+                    // Trigger animation when element is in viewport
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                updateNumber();
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    });
+                    
+                    observer.observe(stat);
+                });
+            };
+            
+            // Trigger number animation on page load
+            setTimeout(animateNumbers, 500);
+        });
+    </script>
+</body>
+</html>

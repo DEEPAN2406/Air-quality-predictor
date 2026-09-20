@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prediction History | Air Quality System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c7873;
+            --secondary-color: #6fb3b8;
+            --accent-color: #ff9a3d;
+            --light-color: #f7f9fb;
+            --dark-color: #2a363b;
+            --good-aqi: #4CAF50;
+            --moderate-aqi: #FFC107;
+            --poor-aqi: #FF9800;
+            --unhealthy-aqi: #F44336;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            min-height: 100vh;
+            color: var(--dark-color);
+        }
+        
+        /* ================= NAVBAR ================= */
+        .navbar {
+            background: linear-gradient(135deg, var(--dark-color) 0%, #3a4a51 100%);
+            padding: 20px 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+        
+        .navbar-brand i {
+            margin-right: 12px;
+            color: var(--secondary-color);
+            font-size: 1.8rem;
+        }
+        
+        /* ================= MAIN CONTAINER ================= */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* ================= HEADER SECTION ================= */
+        .header-section {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+        
+        .page-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 2.5rem;
+            color: var(--dark-color);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .page-title:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border-radius: 2px;
+        }
+        
+        .page-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+        
+        /* ================= STATS CARDS ================= */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: all 0.3s ease;
+            border-top: 4px solid var(--primary-color);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .stat-number {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 2.2rem;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        /* ================= FILTER BAR ================= */
+        .filter-bar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .filter-label {
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        
+        .filter-select {
+            padding: 8px 15px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            background: #f9fafc;
+            color: var(--dark-color);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(44, 120, 115, 0.1);
+            background: white;
+            outline: none;
+        }
+        
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            max-width: 300px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 10px 15px 10px 45px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            background: #f9fafc;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(44, 120, 115, 0.1);
+            background: white;
+            outline: none;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+        
+        /* ================= HISTORY TABLE ================= */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .table-header {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px 25px;
+        }
+        
+        .table-header h3 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .table-header h3 i {
+            margin-right: 12px;
+        }
+        
+        .table-responsive-custom {
+            overflow-x: auto;
+        }
+        
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+        
+        .history-table thead {
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+        }
+        
+        .history-table th {
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark-color);
+            border-bottom: 2px solid #e0e6ed;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+        
+        .history-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #555;
+            transition: all 0.3s ease;
+        }
+        
+        .history-table tbody tr {
+            transition: all 0.3s ease;
+        }
+        
+        .history-table tbody tr:hover {
+            background-color: rgba(44, 120, 115, 0.05);
+        }
+        
+        .pollutant-cell {
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .algorithm-cell {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .algorithm-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+        }
+        
+        .aqi-cell {
+            text-align: center;
+            position: relative;
+        }
+        
+        .aqi-badge {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: white;
+            min-width: 70px;
+        }
+        
+        /* ================= EMPTY STATE ================= */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            color: #e0e6ed;
+            margin-bottom: 20px;
+        }
+        
+        .empty-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #999;
+        }
+        
+        .empty-message {
+            max-width: 500px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+        
+        /* ================= BACK BUTTON ================= */
+        .back-btn-container {
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .back-btn {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border: none;
+            padding: 14px 35px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(44, 120, 115, 0.3);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(44, 120, 115, 0.4);
+            background: linear-gradient(to right, #266a66, #5fa1a6);
+            color: white;
+        }
+        
+        .back-btn i {
+            margin-right: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 30px 15px;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+            
+            .search-box {
+                max-width: 100%;
+            }
+            
+            .stats-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .table-container {
+                border-radius: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-title {
+                font-size: 1.8rem;
+            }
+            
+            .filter-group {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<nav class="navbar">
+    <div class="container">
+        <span class="navbar-brand">
+            <i class="fas fa-history"></i>
+            Prediction History
+        </span>
+    </div>
+</nav>
+
+<!-- ================= MAIN CONTAINER ================= -->
+<div class="main-container">
+    
+    <!-- ================= HEADER SECTION ================= -->
+    <div class="header-section">
+        <h1 class="page-title">Prediction History</h1>
+        <p class="page-subtitle">
+            Review all your previous air quality predictions, track patterns, and analyze historical data trends.
+        </p>
+    </div>
+    
+    <!-- ================= HISTORY TABLE ================= -->
+    <div class="table-container">
+        <div class="table-header">
+            <h3><i class="fas fa-table"></i> Previous Predictions</h3>
+        </div>
+        
+        <div class="table-responsive-custom">
+            {% if rows %}
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>PM2.5</th>
+                        <th>PM10</th>
+                        <th>NO₂</th>
+                        <th>SO₂</th>
+                        <th>CO</th>
+                        <th>O₃</th>
+                        <th>Algorithm</th>
+                        <th>AQI</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                    {% for r in rows %}
+                    {% set aqi_value = r[9]|float if r[9] is string else r[9] %}
+                    {% set aqi_color = '#4CAF50' if aqi_value <= 50 else '#FFC107' if aqi_value <= 100 else '#FF9800' if aqi_value <= 200 else '#F44336' %}
+                    <tr class="prediction-row" 
+                        data-algorithm="{{ r[8] }}" 
+                        data-aqi="{{ aqi_value }}"
+                        data-rowdata="{{ r[2] }},{{ r[3] }},{{ r[4] }},{{ r[5] }},{{ r[6] }},{{ r[7] }},{{ r[8] }},{{ aqi_value }}">
+                        <td class="pollutant-cell">{{ r[2] }}</td>
+                        <td class="pollutant-cell">{{ r[3] }}</td>
+                        <td class="pollutant-cell">{{ r[4] }}</td>
+                        <td class="pollutant-cell">{{ r[5] }}</td>
+                        <td class="pollutant-cell">{{ r[6] }}</td>
+                        <td class="pollutant-cell">{{ r[7] }}</td>
+                        <td class="algorithm-cell">
+                            <i class="fas 
+                                {% if r[8] == 'Random Forest' %} fa-tree 
+                                {% elif r[8] == 'Decision Tree' %} fa-project-diagram 
+                                {% else %} fa-project-diagram {% endif %} 
+                                algorithm-icon">
+                            </i>
+                            {{ r[8] }}
+                        </td>
+                        <td class="aqi-cell">
+                            <span class="aqi-badge" style="background-color: {{ aqi_color }};">
+                                {{ r[9] }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <!-- ================= EMPTY STATE ================= -->
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-inbox"></i>
+                </div>
+                <h3 class="empty-title">No Prediction History Yet</h3>
+                <p class="empty-message">
+                    You haven't made any predictions yet. Start predicting air quality to see your history here.
+                </p>
+                <a href="/predict" class="back-btn">
+                    <i class="fas fa-calculator"></i> Make First Prediction
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- ================= STATS CARDS (JavaScript Calculated) ================= -->
+    {% if rows %}
+    <div class="stats-cards">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-database"></i>
+            </div>
+            <div class="stat-number" id="totalPredictions">0</div>
+            <div class="stat-label">Total Predictions</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-calculator"></i>
+            </div>
+            <div class="stat-number" id="algorithmsUsed">0</div>
+            <div class="stat-label">Algorithms Used</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat-number" id="avgAqi">0</div>
+            <div class="stat-label">Average AQI</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="stat-number" id="todaysPredictions">0</div>
+            <div class="stat-label">Today's Predictions</div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- ================= FILTER BAR ================= -->
+    {% if rows %}
+    <div class="filter-bar">
+        <div class="filter-group">
+            <span class="filter-label">Filter by:</span>
+            <select class="filter-select" id="algorithmFilter">
+                <option value="">All Algorithms</option>
+                <option value="Random Forest">Random Forest</option>
+                <option value="Decision Tree">Decision Tree</option>
+                <option value="SVM">SVM</option>
+            </select>
+            
+            <select class="filter-select" id="aqiFilter">
+                <option value="">All AQI Levels</option>
+                <option value="good">Good (0-50)</option>
+                <option value="moderate">Moderate (51-100)</option>
+                <option value="poor">Poor (101-200)</option>
+                <option value="unhealthy">Unhealthy (201+)</option>
+            </select>
+        </div>
+        
+        <div class="search-box">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search predictions...">
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- ================= BACK BUTTON ================= -->
+    <div class="back-btn-container">
+        <a href="/dashboard" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get all prediction rows
+        const tableRows = document.querySelectorAll('.prediction-row');
+        
+        // If there are rows, calculate statistics
+        if (tableRows.length > 0) {
+            // Convert to array for easier manipulation
+            const rowsArray = Array.from(tableRows);
+            
+            // Calculate statistics
+            let totalPredictions = rowsArray.length;
+            let algorithms = new Set();
+            let totalAqi = 0;
+            
+            rowsArray.forEach(row => {
+                const algorithm = row.getAttribute('data-algorithm');
+                const aqi = parseFloat(row.getAttribute('data-aqi')) || 0;
+                
+                algorithms.add(algorithm);
+                totalAqi += aqi;
+            });
+            
+            const avgAqi = totalAqi / totalPredictions;
+            
+            // Update stats cards
+            document.getElementById('totalPredictions').textContent = totalPredictions;
+            document.getElementById('algorithmsUsed').textContent = algorithms.size;
+            document.getElementById('avgAqi').textContent = avgAqi.toFixed(1);
+            document.getElementById('todaysPredictions').textContent = Math.floor(totalPredictions * 0.3); // Placeholder
+            
+            // Filter functionality
+            const algorithmFilter = document.getElementById('algorithmFilter');
+            const aqiFilter = document.getElementById('aqiFilter');
+            const searchInput = document.getElementById('searchInput');
+            
+            function filterTable() {
+                const algorithmValue = algorithmFilter.value.toLowerCase();
+                const aqiValue = aqiFilter.value;
+                const searchValue = searchInput.value.toLowerCase();
+                
+                rowsArray.forEach(row => {
+                    const algorithm = row.getAttribute('data-algorithm').toLowerCase();
+                    const aqi = parseFloat(row.getAttribute('data-aqi'));
+                    const rowText = row.getAttribute('data-rowdata').toLowerCase();
+                    
+                    let algorithmMatch = !algorithmValue || algorithm.includes(algorithmValue);
+                    let aqiMatch = !aqiValue || (
+                        (aqiValue === 'good' && aqi <= 50) ||
+                        (aqiValue === 'moderate' && aqi > 50 && aqi <= 100) ||
+                        (aqiValue === 'poor' && aqi > 100 && aqi <= 200) ||
+                        (aqiValue === 'unhealthy' && aqi > 200)
+                    );
+                    let searchMatch = !searchValue || rowText.includes(searchValue);
+                    
+                    if (algorithmMatch && aqiMatch && searchMatch) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                // Update empty state if no rows visible
+                const visibleRows = rowsArray.filter(row => row.style.display !== 'none');
+                if (visibleRows.length === 0) {
+                    showNoResultsMessage();
+                } else {
+                    hideNoResultsMessage();
+                }
+            }
+            
+            function showNoResultsMessage() {
+                let noResults = document.getElementById('noResultsMessage');
+                if (!noResults) {
+                    noResults = document.createElement('tr');
+                    noResults.id = 'noResultsMessage';
+                    noResults.innerHTML = `
+                        <td colspan="8" style="text-align: center; padding: 40px; color: #666;">
+                            <i class="fas fa-search fa-2x mb-3" style="color: #e0e6ed;"></i>
+                            <h4 style="color: #999; margin-bottom: 10px;">No matching predictions found</h4>
+                            <p>Try adjusting your filters or search terms</p>
+                        </td>
+                    `;
+                    document.querySelector('#historyTableBody').appendChild(noResults);
+                }
+            }
+            
+            function hideNoResultsMessage() {
+                const noResults = document.getElementById('noResultsMessage');
+                if (noResults) {
+                    noResults.remove();
+                }
+            }
+            
+            // Add event listeners for filtering
+            algorithmFilter.addEventListener('change', filterTable);
+            aqiFilter.addEventListener('change', filterTable);
+            searchInput.addEventListener('input', filterTable);
+            
+            // Sort table rows by AQI
+            const sortBtn = document.createElement('button');
+            sortBtn.className = 'btn btn-sm btn-outline-primary';
+            sortBtn.innerHTML = '<i class="fas fa-sort-amount-down"></i> Sort by AQI';
+            sortBtn.style.marginLeft = '15px';
+            
+            let sortAscending = true;
+            sortBtn.addEventListener('click', function() {
+                const tbody = document.querySelector('#historyTableBody');
+                const visibleRows = Array.from(tableRows).filter(row => row.style.display !== 'none');
+                
+                visibleRows.sort((a, b) => {
+                    const aqiA = parseFloat(a.getAttribute('data-aqi'));
+                    const aqiB = parseFloat(b.getAttribute('data-aqi'));
+                    return sortAscending ? aqiA - aqiB : aqiB - aqiA;
+                });
+                
+                visibleRows.forEach(row => tbody.appendChild(row));
+                
+                sortAscending = !sortAscending;
+                sortBtn.innerHTML = sortAscending ? 
+                    '<i class="fas fa-sort-amount-down"></i> Sort by AQI (Low to High)' : 
+                    '<i class="fas fa-sort-amount-up"></i> Sort by AQI (High to Low)';
+            });
+            
+            // Add sort button to filter bar
+            const filterGroup = document.querySelector('.filter-group');
+            if (filterGroup) {
+                filterGroup.appendChild(sortBtn);
+            }
+            
+            // Add tooltips for pollutant units
+            const pollutantHeaders = document.querySelectorAll('th');
+            const units = {
+                'PM2.5': 'μg/m³',
+                'PM10': 'μg/m³', 
+                'NO₂': 'ppb',
+                'SO₂': 'ppb',
+                'CO': 'ppm',
+                'O₃': 'ppb'
+            };
+            
+            pollutantHeaders.forEach(header => {
+                const text = header.textContent.trim();
+                if (units[text]) {
+                    header.title = `Units: ${units[text]}`;
+                }
+            });
+            
+            // Animate table rows on load
+            setTimeout(() => {
+                rowsArray.forEach((row, index) => {
+                    setTimeout(() => {
+                        row.style.opacity = '0';
+                        row.style.transform = 'translateY(20px)';
+                        row.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                        
+                        setTimeout(() => {
+                            row.style.opacity = '1';
+                            row.style.transform = 'translateY(0)';
+                        }, 50);
+                    }, index * 50);
+                });
+            }, 300);
+        }
+    });
+</script>
+
+</body>
+</html>

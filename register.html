@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Air Quality Prediction System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c7873;
+            --secondary-color: #6fb3b8;
+            --accent-color: #ff9a3d;
+            --light-color: #f7f9fb;
+            --dark-color: #2a363b;
+            --success-color: #4CAF50;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #e4edf5 0%, #f5f7fa 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .registration-container {
+            display: flex;
+            max-width: 1100px;
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .registration-left {
+            flex: 1;
+            background: linear-gradient(rgba(44, 120, 115, 0.85), rgba(44, 120, 115, 0.9)), url('https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .registration-right {
+            flex: 1.2;
+            background: white;
+            padding: 50px 40px;
+        }
+        
+        .welcome-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .welcome-text {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .features-list {
+            list-style: none;
+            margin-bottom: 40px;
+        }
+        
+        .features-list li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .features-list i {
+            color: var(--accent-color);
+            margin-right: 12px;
+            margin-top: 3px;
+            font-size: 1.1rem;
+        }
+        
+        .registration-form-container {
+            max-width: 450px;
+            margin: 0 auto;
+        }
+        
+        .form-title {
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark-color);
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .form-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 22px;
+            position: relative;
+        }
+        
+        .form-control {
+            padding: 14px 16px;
+            border: 2px solid #e0e6ed;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #f9fafc;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(44, 120, 115, 0.1);
+            background-color: white;
+        }
+        
+        .form-label {
+            position: absolute;
+            top: -10px;
+            left: 12px;
+            background: white;
+            padding: 0 8px;
+            font-size: 0.85rem;
+            color: var(--primary-color);
+            font-weight: 500;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus + .form-label,
+        .form-control:not(:placeholder-shown) + .form-label {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .input-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+        
+        .password-requirements {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            border-left: 3px solid var(--secondary-color);
+        }
+        
+        .password-requirements p {
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        
+        .password-requirements ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+        
+        .password-requirements li {
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .requirement-icon {
+            margin-right: 8px;
+            font-size: 0.8rem;
+        }
+        
+        .requirement-met {
+            color: var(--success-color);
+        }
+        
+        .requirement-not-met {
+            color: #ccc;
+        }
+        
+        .btn-register {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border: none;
+            padding: 14px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(44, 120, 115, 0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(44, 120, 115, 0.4);
+            background: linear-gradient(to right, #266a66, #5fa1a6);
+        }
+        
+        .btn-register i {
+            margin-right: 10px;
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        .login-link a {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .login-link a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+        
+        .terms-check {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+        
+        .terms-check input {
+            margin-right: 10px;
+            margin-top: 3px;
+        }
+        
+        .terms-check label {
+            font-size: 0.9rem;
+            color: #555;
+        }
+        
+        .terms-check a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .terms-check a:hover {
+            text-decoration: underline;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+        }
+        
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background-color: #e0e6ed;
+        }
+        
+        .divider-text {
+            padding: 0 15px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        .social-login {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .social-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e0e6ed;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .social-btn.google {
+            color: #DB4437;
+        }
+        
+        .social-btn.github {
+            color: #333;
+        }
+        
+        .social-btn i {
+            margin-right: 8px;
+            font-size: 1.1rem;
+        }
+        
+        @media (max-width: 992px) {
+            .registration-container {
+                flex-direction: column;
+                max-width: 600px;
+            }
+            
+            .registration-left {
+                padding: 40px 30px;
+            }
+            
+            .registration-right {
+                padding: 40px 30px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .registration-left, .registration-right {
+                padding: 30px 20px;
+            }
+            
+            .welcome-title {
+                font-size: 2rem;
+            }
+            
+            .form-title {
+                font-size: 1.8rem;
+            }
+            
+            .social-login {
+                flex-direction: column;
+            }
+        }
+        
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="registration-container">
+        <!-- Left side with information -->
+        <div class="registration-left">
+            <h1 class="welcome-title">Air Quality Prediction System</h1>
+            <p class="welcome-text">Create an account to access advanced air quality prediction tools, track pollution levels, and contribute to a healthier environment.</p>
+            
+            <ul class="features-list">
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Real-time AQI Monitoring</strong>
+                        <p>Track air quality in your area with live updates</p>
+                    </div>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>ML-Powered Predictions</strong>
+                        <p>Get accurate forecasts using advanced algorithms</p>
+                    </div>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Personalized Insights</strong>
+                        <p>Receive recommendations based on your location</p>
+                    </div>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Historical Data Analysis</strong>
+                        <p>View trends and patterns in air quality over time</p>
+                    </div>
+                </li>
+            </ul>
+            
+            <div class="text-center floating-element">
+                <i class="fas fa-leaf fa-3x" style="opacity: 0.8;"></i>
+            </div>
+        </div>
+        
+        <!-- Right side with registration form -->
+        <div class="registration-right">
+            <div class="registration-form-container">
+                <h2 class="form-title">Create Account</h2>
+                <p class="form-subtitle">Fill in your details to get started with air quality monitoring</p>
+                
+                <form method="post" id="registrationForm">
+                    <div class="form-group">
+                        <input type="text" name="name" class="form-control" placeholder="Full Name" required>
+                        <span class="form-label">Full Name</span>
+                        <div class="input-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="email" name="email" class="form-control" placeholder="Email Address" required>
+                        <span class="form-label">Email Address</span>
+                        <div class="input-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="password" name="password" id="password" class="form-control" placeholder="Create Password" required>
+                        <span class="form-label">Create Password</span>
+                        <div class="input-icon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        
+                        <div class="password-requirements">
+                            <p>Password must include:</p>
+                            <ul>
+                                <li id="req-length">
+                                    <i class="fas requirement-icon requirement-not-met"></i>
+                                    At least 8 characters
+                                </li>
+                                <li id="req-uppercase">
+                                    <i class="fas requirement-icon requirement-not-met"></i>
+                                    One uppercase letter
+                                </li>
+                                <li id="req-lowercase">
+                                    <i class="fas requirement-icon requirement-not-met"></i>
+                                    One lowercase letter
+                                </li>
+                                <li id="req-number">
+                                    <i class="fas requirement-icon requirement-not-met"></i>
+                                    One number
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Confirm Password" required>
+                        <span class="form-label">Confirm Password</span>
+                        <div class="input-icon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <div id="password-match" class="small mt-1" style="display: none;"></div>
+                    </div>
+                    
+                    <div class="terms-check">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms">
+                            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. I understand that my data will be used for air quality analysis and improvement.
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn-register">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
+                    
+                    <div class="divider">
+                        <div class="divider-line"></div>
+                        <div class="divider-text">Or register with</div>
+                        <div class="divider-line"></div>
+                    </div>
+                    
+                    <div class="social-login">
+                        <button type="button" class="social-btn google">
+                            <i class="fab fa-google"></i> Google
+                        </button>
+                        <button type="button" class="social-btn github">
+                            <i class="fab fa-github"></i> GitHub
+                        </button>
+                    </div>
+                    
+                    <div class="login-link">
+                        Already have an account? <a href="/login">Login here</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirm_password');
+            const passwordMatchDiv = document.getElementById('password-match');
+            
+            // Password validation logic
+            function validatePassword() {
+                const password = passwordInput.value;
+                const requirements = {
+                    length: password.length >= 8,
+                    uppercase: /[A-Z]/.test(password),
+                    lowercase: /[a-z]/.test(password),
+                    number: /\d/.test(password)
+                };
+                
+                // Update requirement indicators
+                document.getElementById('req-length').querySelector('.requirement-icon').className = 
+                    `fas requirement-icon ${requirements.length ? 'fa-check requirement-met' : 'fa-times requirement-not-met'}`;
+                
+                document.getElementById('req-uppercase').querySelector('.requirement-icon').className = 
+                    `fas requirement-icon ${requirements.uppercase ? 'fa-check requirement-met' : 'fa-times requirement-not-met'}`;
+                
+                document.getElementById('req-lowercase').querySelector('.requirement-icon').className = 
+                    `fas requirement-icon ${requirements.lowercase ? 'fa-check requirement-met' : 'fa-times requirement-not-met'}`;
+                
+                document.getElementById('req-number').querySelector('.requirement-icon').className = 
+                    `fas requirement-icon ${requirements.number ? 'fa-check requirement-met' : 'fa-times requirement-not-met'}`;
+                
+                return requirements.length && requirements.uppercase && requirements.lowercase && requirements.number;
+            }
+            
+            // Password confirmation logic
+            function checkPasswordMatch() {
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                
+                if (confirmPassword === '') {
+                    passwordMatchDiv.style.display = 'none';
+                    return;
+                }
+                
+                passwordMatchDiv.style.display = 'block';
+                
+                if (password === confirmPassword && password !== '') {
+                    passwordMatchDiv.innerHTML = '<i class="fas fa-check-circle text-success"></i> Passwords match';
+                    passwordMatchDiv.className = 'small mt-1 text-success';
+                } else {
+                    passwordMatchDiv.innerHTML = '<i class="fas fa-times-circle text-danger"></i> Passwords do not match';
+                    passwordMatchDiv.className = 'small mt-1 text-danger';
+                }
+            }
+            
+            // Add event listeners
+            passwordInput.addEventListener('input', function() {
+                validatePassword();
+                checkPasswordMatch();
+            });
+            
+            confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+            
+            // Form submission validation
+            document.getElementById('registrationForm').addEventListener('submit', function(e) {
+                if (!validatePassword()) {
+                    e.preventDefault();
+                    alert('Please ensure your password meets all requirements.');
+                    return;
+                }
+                
+                if (passwordInput.value !== confirmPasswordInput.value) {
+                    e.preventDefault();
+                    alert('Passwords do not match. Please check and try again.');
+                    return;
+                }
+                
+                // Show loading state
+                const submitBtn = this.querySelector('.btn-register');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+                submitBtn.disabled = true;
+                
+                // In a real application, you would allow the form to submit here
+                // For demo purposes, we'll revert after 2 seconds
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }, 2000);
+            });
+            
+            // Add floating label effect
+            const formInputs = document.querySelectorAll('.form-control');
+            formInputs.forEach(input => {
+                // Check if input has value on page load
+                if (input.value) {
+                    input.previousElementSibling.style.opacity = '1';
+                }
+                
+                input.addEventListener('focus', function() {
+                    this.previousElementSibling.style.opacity = '1';
+                });
+                
+                input.addEventListener('blur', function() {
+                    if (!this.value) {
+                        this.previousElementSibling.style.opacity = '0';
+                    }
+                });
+            });
+            
+            // Social login buttons (demo functionality)
+            document.querySelectorAll('.social-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const provider = this.classList.contains('google') ? 'Google' : 'GitHub';
+                    alert(`In a real application, this would connect to ${provider} authentication.`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
