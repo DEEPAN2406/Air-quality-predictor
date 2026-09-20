@@ -1,0 +1,111 @@
+/* ===== GLOBAL ===== */
+body {
+    font-family: "Segoe UI", Tahoma, sans-serif;
+    background: linear-gradient(to right, #f4f7fa, #eef2f7);
+    color: #333;
+}
+
+h1, h2, h3 {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* ===== CARD / FORM ===== */
+.container {
+    animation: fadeIn 0.6s ease-in;
+}
+
+form {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+input, select {
+    border-radius: 6px !important;
+}
+
+/* ===== BUTTONS ===== */
+.btn-primary {
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    border: none;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #16a34a, #166534);
+    border: none;
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #6b7280, #374151);
+    border: none;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #dc2626, #7f1d1d);
+    border: none;
+}
+
+.btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    transition: 0.3s;
+}
+
+/* ===== TABLE ===== */
+.table {
+    background: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.table th {
+    background: #1f2937;
+    color: #ffffff;
+    text-align: center;
+}
+
+.table td {
+    text-align: center;
+}
+
+/* ===== ALERT ===== */
+.alert-success {
+    background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+    color: #065f46;
+    font-weight: 600;
+}
+
+/* ===== LINKS ===== */
+a {
+    text-decoration: none;
+    font-weight: 500;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ===== ANIMATION ===== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
